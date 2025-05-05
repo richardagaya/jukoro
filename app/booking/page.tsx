@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
@@ -28,7 +28,7 @@ const services = {
   }
 };
 
-export default function Booking() {
+function BookingContent() {
   const searchParams = useSearchParams();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -194,5 +194,17 @@ export default function Booking() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function Booking() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <BookingContent />
+    </Suspense>
   );
 } 
