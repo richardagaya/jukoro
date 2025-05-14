@@ -51,9 +51,7 @@ export class PesapalClient {
   private tokenExpiry: number = 0;
 
   constructor(private config: PesapalConfig) {
-    this.baseUrl = config.debug
-      ? 'https://cybqa.pesapal.com/pesapalv3'
-      : 'https://pay.pesapal.com/v3';
+    this.baseUrl = 'https://pay.pesapal.com/v3';
   }
 
   private async getToken(): Promise<string> {
