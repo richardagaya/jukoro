@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { PesapalClient } from '@/app/lib/pesapal';
 
+// Add debug logging for environment variables
+console.log('Environment check:', {
+  hasConsumerKey: !!process.env.PESAPAL_CONSUMER_KEY,
+  hasConsumerSecret: !!process.env.PESAPAL_CONSUMER_SECRET,
+  hasIpnId: !!process.env.PESAPAL_IPN_ID,
+  hasBaseUrl: !!process.env.NEXT_PUBLIC_BASE_URL,
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL
+});
+
 // Initialize Pesapal client
 const pesapal = new PesapalClient({
   consumerKey: process.env.PESAPAL_CONSUMER_KEY || '',
@@ -11,16 +20,16 @@ const pesapal = new PesapalClient({
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.PESAPAL_CONSUMER_KEY || !process.env.PESAPAL_CONSUMER_SECRET) {
-      throw new Error('Pesapal credentials not configured');
-    }
+    // Add detailed environment variable checking
+    const missingVars = [];
+    if (!process.env.PESAPAL_CONSUMER_KEY) missingVars.push('PESAPAL_CONSUMER_KEY');
+    if (!process.env.PESAPAL_CONSUMER_SECRET) missingVars.push('PESAPAL_CONSUMER_SECRET');
+    if (!process.env.PESAPAL_IPN_ID) missingVars.push('PESAPAL_IPN_ID');
+    if (!process.env.NEXT_PUBLIC_BASE_URL) missingVars.push('NEXT_PUBLIC_BASE_URL');
 
-    if (!process.env.PESAPAL_IPN_ID) {
-      throw new Error('Pesapal IPN ID not configured');
-    }
-
-    if (!process.env.NEXT_PUBLIC_BASE_URL) {
-      throw new Error('Base URL not configured');
+    if (missingVars.length > 0) {
+      console.error('Missing environment variables:', missingVars);
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
     }
 
     const body = await request.json();

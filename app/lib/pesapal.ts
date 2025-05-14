@@ -51,6 +51,22 @@ export class PesapalClient {
   private tokenExpiry: number = 0;
 
   constructor(private config: PesapalConfig) {
+    // Add validation for required config
+    if (!config.consumerKey || config.consumerKey.trim() === '') {
+      throw new PesapalError('Consumer Key is required and cannot be empty');
+    }
+    if (!config.consumerSecret || config.consumerSecret.trim() === '') {
+      throw new PesapalError('Consumer Secret is required and cannot be empty');
+    }
+
+    console.log('Initializing PesapalClient with config:', {
+      hasConsumerKey: !!config.consumerKey,
+      consumerKeyLength: config.consumerKey.length,
+      hasConsumerSecret: !!config.consumerSecret,
+      consumerSecretLength: config.consumerSecret.length,
+      debug: config.debug
+    });
+
     this.baseUrl = 'https://pay.pesapal.com/v3';
   }
 
