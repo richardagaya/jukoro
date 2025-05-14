@@ -244,7 +244,6 @@ function BookingContent() {
     </div>
   );
 }
-
 export default function Booking() {
   return (
     <Suspense fallback={
