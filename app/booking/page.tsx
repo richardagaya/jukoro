@@ -38,6 +38,8 @@ function BookingContent() {
     date: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const service = searchParams.get('service');
@@ -48,11 +50,45 @@ function BookingContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically:
-    // 1. Create a Stripe checkout session
-    // 2. Send the booking details to your backend
-    // 3. Redirect to Stripe checkout
-    console.log('Booking submitted:', { ...formData, service: selectedService });
+    setLoading(true);
+    setError('');
+
+    try {
+      if (!selectedService) {
+        throw new Error('Please select a service');
+      }
+
+      const service = services[selectedService as keyof typeof services];
+      
+      const response = await fetch('/api/pesapal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          service: selectedService,
+          amount: service.price
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Payment initiation failed');
+      }
+
+      // Redirect to Pesapal payment page
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        throw new Error('No payment URL received');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to process payment');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,6 +152,11 @@ function BookingContent() {
             {/* Booking Form */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
               <h2 className="text-3xl font-bold mb-6">Booking Details</h2>
+              {error && (
+                <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -183,10 +224,17 @@ function BookingContent() {
 
                 <button
                   type="submit"
-                  disabled={!selectedService}
-                  className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!selectedService || loading}
+                  className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  Proceed to Payment
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    `Pay KES ${selectedService ? services[selectedService as keyof typeof services].price : '0'}`
+                  )}
                 </button>
               </form>
             </div>
