@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
@@ -12,7 +12,7 @@ interface PaymentStatus {
   created_date?: string;
 }
 
-export default function PaymentConfirmation() {
+function PaymentConfirmationContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<string>('loading');
   const [paymentDetails, setPaymentDetails] = useState<PaymentStatus | null>(null);
@@ -155,5 +155,17 @@ export default function PaymentConfirmation() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function PaymentConfirmation() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black dark:border-white"></div>
+      </div>
+    }>
+      <PaymentConfirmationContent />
+    </Suspense>
   );
 } 
