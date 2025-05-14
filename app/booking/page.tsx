@@ -21,7 +21,7 @@ const services = {
   },
   class: {
     title: 'Photography Classes',
-    price: 15000,
+    price: 50,
     duration: '2 hours',
     description: 'One-on-one photography instruction',
     image: '/services/class.jpg'
