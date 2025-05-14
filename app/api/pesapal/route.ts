@@ -48,8 +48,8 @@ export async function POST(request: Request) {
       currency: "KES",
       amount: amount,
       description: `Photography Service: ${service}`,
-      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/booking/confirmation`,
-      notification_id: process.env.PESAPAL_IPN_ID,
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/booking/confirmation`,
+      notification_id: process.env.PESAPAL_IPN_ID!,
       billing_address: {
         email_address: email,
         phone_number: phone,
