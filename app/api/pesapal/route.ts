@@ -2,35 +2,36 @@ import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { PesapalClient } from '@/app/lib/pesapal';
 
-// Add debug logging for environment variables
-console.log('Environment check:', {
-  hasConsumerKey: !!process.env.PESAPAL_CONSUMER_KEY,
-  hasConsumerSecret: !!process.env.PESAPAL_CONSUMER_SECRET,
-  hasIpnId: !!process.env.PESAPAL_IPN_ID,
-  hasBaseUrl: !!process.env.NEXT_PUBLIC_BASE_URL,
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL
-});
-
-// Initialize Pesapal client
-const pesapal = new PesapalClient({
-  consumerKey: process.env.PESAPAL_CONSUMER_KEY || '',
-  consumerSecret: process.env.PESAPAL_CONSUMER_SECRET || '',
-  debug: process.env.NODE_ENV !== 'production'
+// Debug logging for environment variables
+console.log('API Route Environment Variables Status:', {
+  PESAPAL_CONSUMER_KEY: typeof process.env.PESAPAL_CONSUMER_KEY === 'string' ? 'Present' : 'Missing',
+  PESAPAL_CONSUMER_SECRET: typeof process.env.PESAPAL_CONSUMER_SECRET === 'string' ? 'Present' : 'Missing',
+  PESAPAL_IPN_ID: typeof process.env.PESAPAL_IPN_ID === 'string' ? 'Present' : 'Missing',
+  NEXT_PUBLIC_BASE_URL: typeof process.env.NEXT_PUBLIC_BASE_URL === 'string' ? 'Present' : 'Missing'
 });
 
 export async function POST(request: Request) {
   try {
-    // Add detailed environment variable checking
-    const missingVars = [];
-    if (!process.env.PESAPAL_CONSUMER_KEY) missingVars.push('PESAPAL_CONSUMER_KEY');
-    if (!process.env.PESAPAL_CONSUMER_SECRET) missingVars.push('PESAPAL_CONSUMER_SECRET');
-    if (!process.env.PESAPAL_IPN_ID) missingVars.push('PESAPAL_IPN_ID');
-    if (!process.env.NEXT_PUBLIC_BASE_URL) missingVars.push('NEXT_PUBLIC_BASE_URL');
-
-    if (missingVars.length > 0) {
-      console.error('Missing environment variables:', missingVars);
-      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    // Validate environment variables first
+    if (typeof process.env.PESAPAL_CONSUMER_KEY !== 'string' || !process.env.PESAPAL_CONSUMER_KEY.trim()) {
+      throw new Error('PESAPAL_CONSUMER_KEY is missing or empty');
     }
+    if (typeof process.env.PESAPAL_CONSUMER_SECRET !== 'string' || !process.env.PESAPAL_CONSUMER_SECRET.trim()) {
+      throw new Error('PESAPAL_CONSUMER_SECRET is missing or empty');
+    }
+    if (typeof process.env.PESAPAL_IPN_ID !== 'string' || !process.env.PESAPAL_IPN_ID.trim()) {
+      throw new Error('PESAPAL_IPN_ID is missing or empty');
+    }
+    if (typeof process.env.NEXT_PUBLIC_BASE_URL !== 'string' || !process.env.NEXT_PUBLIC_BASE_URL.trim()) {
+      throw new Error('NEXT_PUBLIC_BASE_URL is missing or empty');
+    }
+
+    // Initialize Pesapal client after validation
+    const pesapalClient = new PesapalClient({
+      consumerKey: process.env.PESAPAL_CONSUMER_KEY,
+      consumerSecret: process.env.PESAPAL_CONSUMER_SECRET,
+      debug: process.env.NODE_ENV !== 'production'
+    });
 
     const body = await request.json();
     const { name, email, phone, date, message, service, amount } = body;
@@ -43,13 +44,13 @@ export async function POST(request: Request) {
     }
 
     // Submit the order
-    const orderResponse = await pesapal.submitOrder({
+    const orderResponse = await pesapalClient.submitOrder({
       id: uuidv4(),
       currency: "KES",
       amount: amount,
       description: `Photography Service: ${service}`,
-      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/booking/confirmation`,
-      notification_id: process.env.PESAPAL_IPN_ID!,
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/booking/confirmation`,
+      notification_id: process.env.PESAPAL_IPN_ID,
       billing_address: {
         email_address: email,
         phone_number: phone,
@@ -94,6 +95,21 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    // Validate environment variables first
+    if (typeof process.env.PESAPAL_CONSUMER_KEY !== 'string' || !process.env.PESAPAL_CONSUMER_KEY.trim()) {
+      throw new Error('PESAPAL_CONSUMER_KEY is missing or empty');
+    }
+    if (typeof process.env.PESAPAL_CONSUMER_SECRET !== 'string' || !process.env.PESAPAL_CONSUMER_SECRET.trim()) {
+      throw new Error('PESAPAL_CONSUMER_SECRET is missing or empty');
+    }
+
+    // Initialize Pesapal client after validation
+    const pesapalClient = new PesapalClient({
+      consumerKey: process.env.PESAPAL_CONSUMER_KEY,
+      consumerSecret: process.env.PESAPAL_CONSUMER_SECRET,
+      debug: process.env.NODE_ENV !== 'production'
+    });
+
     const { searchParams } = new URL(request.url);
     const orderTrackingId = searchParams.get('OrderTrackingId');
 
@@ -105,7 +121,7 @@ export async function GET(request: Request) {
     }
 
     // Get transaction status
-    const status = await pesapal.getTransactionStatus(orderTrackingId);
+    const status = await pesapalClient.getTransactionStatus(orderTrackingId);
 
     // Format the response
     return NextResponse.json({
