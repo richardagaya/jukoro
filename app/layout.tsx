@@ -93,7 +93,7 @@ export default function RootLayout({
               <div>
                 <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
                 <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-                  <li>Moi avenue the bazaar room 202</li>
+                  <li>Moi avenue the bazaar plaza</li>
                   <li>Nairobi, Kenya</li>
                   <li>contact@jukoro.com</li>
                   <li>+254 112 465 832</li>

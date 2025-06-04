@@ -49,37 +49,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Achievements */}
-      <section className="py-16 px-4 md:px-8 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Achievements & Recognition</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Awards Won",
-                number: "15+",
-                description: "International photography awards"
-              },
-              {
-                title: "Exhibitions",
-                number: "8",
-                description: "Solo and group exhibitions"
-              },
-              {
-                title: "Happy Clients",
-                number: "500+",
-                description: "Satisfied customers worldwide"
-              }
-            ].map((achievement, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl font-bold mb-2">{achievement.number}</div>
-                <h3 className="text-xl font-semibold mb-2">{achievement.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{achievement.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Equipment */}
       <section className="py-16 px-4 md:px-8">

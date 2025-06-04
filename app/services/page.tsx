@@ -3,23 +3,21 @@ import Link from "next/link";
 
 const services = [
   {
-    title: "Portrait Photography",
+    title: "Studio  Photography",
     description: "Professional portrait sessions for individuals, couples, and families. Perfect for capturing special moments and creating lasting memories.",
-    price: "$250",
-    duration: "1-2 hours",
+    price: "5000",
     includes: [
       "Professional photo shoot",
       "10 edited digital images",
       "Online gallery access",
       "Print release"
     ],
-    image: "/services/portrait.jpg"
+    image: "/services/service1.jpg"
   },
   {
     title: "Event Photography",
     description: "Capture the magic of your special events with our professional event photography service. Perfect for weddings, parties, and corporate events.",
-    price: "$500",
-    duration: "4 hours",
+    price: "15000",
     includes: [
       "Full event coverage",
       "50+ edited digital images",
@@ -27,13 +25,12 @@ const services = [
       "Print release",
       "Fast turnaround"
     ],
-    image: "/services/event.jpg"
+    image: "/services/service2.jpg"
   },
   {
     title: "Photography Classes",
     description: "Learn photography from a professional. Perfect for beginners and intermediate photographers looking to improve their skills.",
-    price: "$150",
-    duration: "2 hours",
+    price: "7000",
     includes: [
       "One-on-one instruction",
       "Camera basics",
@@ -41,7 +38,7 @@ const services = [
       "Lighting fundamentals",
       "Post-processing tips"
     ],
-    image: "/services/class.jpg"
+    image: "/services/service3.webp"
   }
 ];
 
@@ -87,7 +84,6 @@ export default function Services() {
                     <span className="text-3xl font-bold">{service.price}</span>
                     <span className="text-gray-500 dark:text-gray-400"> / session</span>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">Duration: {service.duration}</p>
                   <ul className="mb-6 space-y-2">
                     {service.includes.map((item, i) => (
                       <li key={i} className="flex items-center text-gray-600 dark:text-gray-300">
@@ -110,33 +106,7 @@ export default function Services() {
           </div>
         </div>
       </section>
-
-      {/* Testimonials Section */}
-      <section className="py-16 px-4 md:px-8 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "Portrait Client",
-                text: "The photos turned out absolutely stunning! The photographer made me feel so comfortable and captured my personality perfectly."
-              },
-              {
-                name: "Michael Chen",
-                role: "Event Client",
-                text: "Professional, punctual, and the photos were beyond our expectations. Will definitely book again for our next event!"
-              }
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <p className="text-gray-600 dark:text-gray-300 mb-4">"{testimonial.text}"</p>
-                <p className="font-bold">{testimonial.name}</p>
-                <p className="text-gray-500 dark:text-gray-400">{testimonial.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 } 

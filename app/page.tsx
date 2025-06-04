@@ -75,9 +75,9 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Portrait Photography",
-                description: "Capture your personality in stunning portraits",
-                image: "/services/portrait.jpg"
+                title: "Studio Photography",
+                description: "Professional studio sessions for all occasions",
+                image: "/services/service1.jpg"
               },
               {
                 title: "Event Photography",
@@ -87,7 +87,7 @@ export default function Home() {
               {
                 title: "Photography Classes",
                 description: "Learn photography from a professional",
-                image: "/services/class.jpg"
+                image: "/services/service3.webp"
               }
             ].map((service, index) => (
               <div key={index} className="relative group">

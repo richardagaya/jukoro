@@ -6,25 +6,22 @@ import Image from 'next/image';
 
 const services = {
   portrait: {
-    title: 'Portrait Photography',
-    price: 20000,
-    duration: '1-2 hours',
+    title: 'Studio Photography',
+    price: 1000,
     description: 'Professional portrait session with 10 edited images',
-    image: '/services/portrait.jpg'
+    image: '/services/service1.jpg',
   },
   event: {
     title: 'Event Photography',
-    price: 50000,
-    duration: '4 hours',
+    price: 2000,
     description: 'Full event coverage with 50+ edited images',
-    image: '/services/images.jpeg'
+    image: '/services/images.jpeg',
   },
   class: {
     title: 'Photography Classes',
-    price: 50,
-    duration: '2 hours',
+    price: 1500,
     description: 'One-on-one photography instruction',
-    image: '/services/class.jpg'
+    image: '/services/service3.webp',
   }
 };
 
@@ -141,7 +138,7 @@ function BookingContent() {
                       <div className="text-left">
                         <h3 className="text-xl font-semibold">{service.title}</h3>
                         <p className="text-gray-600 dark:text-gray-300">{service.description}</p>
-                        <p className="mt-2 font-medium">KES {service.price} • {service.duration}</p>
+                        <p className="mt-2 font-medium">KES {service.price}</p>
                       </div>
                     </div>
                   </button>

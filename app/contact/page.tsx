@@ -124,7 +124,7 @@ export default function Contact() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Email</h3>
-                    <p className="text-gray-600 dark:text-gray-300">contact@photographystudio.com</p>
+                    <p className="text-gray-600 dark:text-gray-300">contact@Jukoro.com</p>
                   </div>
                 </div>
 
@@ -136,7 +136,7 @@ export default function Contact() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Phone</h3>
-                    <p className="text-gray-600 dark:text-gray-300">+1 (555) 123-4567</p>
+                    <p className="text-gray-600 dark:text-gray-300">+254 112 465 832</p>
                   </div>
                 </div>
 
@@ -149,26 +149,13 @@ export default function Contact() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Studio Location</h3>
-                    <p className="text-gray-600 dark:text-gray-300">123 Photography Street, New York, NY 10001</p>
+                    <p className="text-gray-600 dark:text-gray-300">Moi avenue  the baazar plaza</p>
                   </div>
                 </div>
               </div>
 
               {/* Social Media */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Follow Me</h3>
-                <div className="flex space-x-4">
-                  {['Instagram', 'Facebook', 'Twitter'].map((platform) => (
-                    <a
-                      key={platform}
-                      href="#"
-                      className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
-                    >
-                      {platform}
-                    </a>
-                  ))}
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
