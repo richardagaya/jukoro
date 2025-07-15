@@ -35,6 +35,7 @@ function BookingContent() {
     date: '',
     message: ''
   });
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'pesapal' | 'paypal'>('pesapal');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -57,7 +58,7 @@ function BookingContent() {
 
       const service = services[selectedService as keyof typeof services];
       
-      const response = await fetch('/api/pesapal', {
+      const response = await fetch(`/api/${selectedPaymentMethod}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ function BookingContent() {
         throw new Error(data.error || 'Payment initiation failed');
       }
 
-      // Redirect to Pesapal payment page
+      // Redirect to payment page
       if (data.redirect_url) {
         window.location.href = data.redirect_url;
       } else {
@@ -219,6 +220,42 @@ function BookingContent() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Payment Method
+                  </label>
+                  <div className="space-y-3">
+                    <label className="flex items-center space-x-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="pesapal"
+                        checked={selectedPaymentMethod === 'pesapal'}
+                        onChange={(e) => setSelectedPaymentMethod(e.target.value as 'pesapal' | 'paypal')}
+                        className="text-black focus:ring-black"
+                      />
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">Pesapal</span>
+                        <span className="text-xs text-gray-500">(Local payments)</span>
+                      </div>
+                    </label>
+                    <label className="flex items-center space-x-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="paypal"
+                        checked={selectedPaymentMethod === 'paypal'}
+                        onChange={(e) => setSelectedPaymentMethod(e.target.value as 'pesapal' | 'paypal')}
+                        className="text-black focus:ring-black"
+                      />
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">PayPal</span>
+                        <span className="text-xs text-gray-500">(International payments)</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={!selectedService || loading}
@@ -230,7 +267,7 @@ function BookingContent() {
                       Processing...
                     </>
                   ) : (
-                    `Pay KES ${selectedService ? services[selectedService as keyof typeof services].price : '0'}`
+                    `Pay with ${selectedPaymentMethod === 'pesapal' ? 'Pesapal' : 'PayPal'} - KES ${selectedService ? services[selectedService as keyof typeof services].price : '0'}`
                   )}
                 </button>
               </form>

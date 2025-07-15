@@ -8,8 +8,11 @@ interface PaymentStatus {
   status: string;
   payment_method?: string;
   payment_account?: string;
+  payment_source?: string;
   amount?: number;
+  currency?: string;
   created_date?: string;
+  created_time?: string;
 }
 
 function PaymentConfirmationContent() {
@@ -21,23 +24,62 @@ function PaymentConfirmationContent() {
   useEffect(() => {
     const checkPaymentStatus = async () => {
       const orderTrackingId = searchParams.get('OrderTrackingId');
+      const orderId = searchParams.get('orderId');
+      const provider = searchParams.get('provider');
       
-      if (!orderTrackingId) {
+      if (!orderTrackingId && !orderId) {
         setStatus('error');
         setError('Payment tracking ID not found');
         return;
       }
 
       try {
-        const response = await fetch(`/api/pesapal?OrderTrackingId=${orderTrackingId}`);
-        const data = await response.json();
+        let response;
+        let data;
 
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to verify payment');
+        if (provider === 'paypal' && orderId) {
+          // Handle PayPal payment
+          response = await fetch(`/api/paypal?orderId=${orderId}`);
+          data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to verify PayPal payment');
+          }
+
+          // For PayPal, we need to capture the payment if it's approved
+          if (data.status === 'APPROVED') {
+            const captureResponse = await fetch('/api/paypal/capture', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ orderId }),
+            });
+
+            const captureData = await captureResponse.json();
+
+            if (!captureResponse.ok) {
+              throw new Error(captureData.error || 'Failed to capture PayPal payment');
+            }
+
+            setPaymentDetails(captureData);
+            setStatus(captureData.status === 'COMPLETED' ? 'COMPLETED' : 'PENDING');
+          } else {
+            setPaymentDetails(data);
+            setStatus(data.status || 'PENDING');
+          }
+        } else {
+          // Handle Pesapal payment
+          response = await fetch(`/api/pesapal?OrderTrackingId=${orderTrackingId}`);
+          data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to verify payment');
+          }
+
+          setPaymentDetails(data);
+          setStatus(data.status || 'PENDING');
         }
-
-        setPaymentDetails(data);
-        setStatus(data.status || 'PENDING');
       } catch (error) {
         setStatus('error');
         setError(error instanceof Error ? error.message : 'Payment verification failed');
@@ -88,16 +130,26 @@ function PaymentConfirmationContent() {
               {paymentDetails && (
                 <div className="mt-4 space-y-2 text-left bg-gray-50 dark:bg-gray-800 p-6 rounded-lg max-w-md mx-auto">
                   <p className="text-gray-600 dark:text-gray-300">
-                    <span className="font-semibold">Amount:</span> KES {paymentDetails.amount}
+                    <span className="font-semibold">Amount:</span> {paymentDetails.currency || 'KES'} {paymentDetails.amount}
                   </p>
                   {paymentDetails.payment_method && (
                     <p className="text-gray-600 dark:text-gray-300">
                       <span className="font-semibold">Payment Method:</span> {paymentDetails.payment_method}
                     </p>
                   )}
+                  {paymentDetails.payment_source && (
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <span className="font-semibold">Payment Source:</span> {paymentDetails.payment_source}
+                    </p>
+                  )}
                   {paymentDetails.created_date && (
                     <p className="text-gray-600 dark:text-gray-300">
                       <span className="font-semibold">Date:</span> {new Date(paymentDetails.created_date).toLocaleString()}
+                    </p>
+                  )}
+                  {paymentDetails.created_time && (
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <span className="font-semibold">Date:</span> {new Date(paymentDetails.created_time).toLocaleString()}
                     </p>
                   )}
                 </div>
