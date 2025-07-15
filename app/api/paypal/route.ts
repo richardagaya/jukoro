@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       purchase_units: [
         {
           amount: {
-            currency_code: 'USD', // PayPal typically uses USD
+            currency_code: 'USD',
             value: amount.toString()
           },
           description: `Photography Service: ${service}`,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         }
       ],
       application_context: {
-        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/booking/confirmation?provider=paypal&orderId={CHECKOUT_SESSION_ID}`,
+        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/booking/confirmation?provider=paypal`,
         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/booking?error=payment_cancelled`
       }
     });
@@ -73,8 +73,12 @@ export async function POST(request: Request) {
     if (orderResponse && orderResponse.links) {
       const approveLink = orderResponse.links.find((link: any) => link.rel === 'approve');
       if (approveLink) {
+        // Construct the final return URL with the actual order ID
+        const finalReturnUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/booking/confirmation?provider=paypal&orderId=${orderResponse.id}`;
+        // Update the approve link with our return URL
+        const updatedApproveLink = `${approveLink.href}&return_url=${encodeURIComponent(finalReturnUrl)}`;
         return NextResponse.json({ 
-          redirect_url: approveLink.href,
+          redirect_url: updatedApproveLink,
           order_id: orderResponse.id 
         });
       }
